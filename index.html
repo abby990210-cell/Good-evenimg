@@ -5,6 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>樂齡復健 APP</title>
 <style>
+  /* ===== 莫蘭迪按鈕色票（灰調、低飽和；白字對比皆 ≥ 4.5） ===== */
+  :root {
+    --m-sage:    #5F7A64;  --m-sage-d:  #4C634F;  --m-sage-t:  #DDE7DC;
+    --m-rose:    #9B645F;  --m-rose-d:  #824F4B;  --m-rose-t:  #F1DFDD;
+    --m-blue:    #58727F;  --m-blue-d:  #465C68;
+    --m-mauve:   #7B6A8C;  --m-mauve-d: #66567A;
+    --m-sand:    #E9DFD0;  --m-sand-d:  #DCCFBC;  --m-sand-ink: #4A3F33;
+    --m-shadow:  0 3px 8px rgba(74, 63, 51, 0.18);
+    --m-shadow-h:0 8px 16px rgba(74, 63, 51, 0.26);
+  }
   html { scroll-behavior: smooth; }
   body {
     margin: 0;
@@ -79,16 +89,25 @@
   h1 { font-size: 40px; color: #2e5230; margin: 0 0 12px; }
   .cover p { font-size: 18px; color: #4d5f4e; margin: 0 0 26px; }
   button {
-    background-color: #3c6b3f;
-    color: white;
+    background-color: var(--m-sage);
+    color: #fff;
     border: none;
     padding: 12px 32px;
     font-size: 16px;
-    border-radius: 24px;
+    font-family: inherit;
+    letter-spacing: 0.04em;
+    border-radius: 999px;
     cursor: pointer;
-    transition: background-color 0.2s, transform 0.2s;
+    box-shadow: var(--m-shadow);
+    transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
   }
-  button:hover { background-color: #2e5230; transform: translateY(-2px); }
+  button:hover:not(:disabled) { background-color: var(--m-sage-d); transform: translateY(-2px); box-shadow: var(--m-shadow-h); }
+  button:active:not(:disabled) { transform: translateY(0); box-shadow: 0 1px 3px rgba(74, 63, 51, 0.25); }
+  button:focus-visible { outline: 3px solid var(--m-mauve); outline-offset: 3px; }
+  button:disabled { background-color: var(--m-sand-d); color: #8c8171; box-shadow: none; cursor: not-allowed; }
+
+  /* 主要按鈕：膠囊形、鼠尾草綠 */
+  .btn-main { padding: 14px 38px; font-size: 17px; }
 
   /* ===== 三個按鈕同一排 ===== */
   .cta-row {
@@ -100,11 +119,15 @@
     flex-wrap: wrap;
   }
   .tab-btn {
-    background-color: #fdfdfb;
-    color: #3c6b3f;
-    border: 1px solid #a9c89c;
+    background-color: transparent;
+    color: var(--m-sage-d);
+    border: 2px solid var(--m-sage);
+    padding: 10px 28px;
+    box-shadow: none;
   }
-  .tab-btn.active { background-color: #3c6b3f; color: white; border-color: #3c6b3f; }
+  .tab-btn:hover:not(:disabled) { background-color: var(--m-sage-t); color: var(--m-sage-d); box-shadow: none; }
+  .tab-btn.active { background-color: var(--m-rose); color: #fff; border-color: var(--m-rose); box-shadow: var(--m-shadow); }
+  .tab-btn.active:hover:not(:disabled) { background-color: var(--m-rose-d); color: #fff; }
 
   h2 { font-size: 28px; color: #2e5230; margin: 0 0 18px; text-align: center; }
 
@@ -224,9 +247,11 @@
   .media-note { font-size: 12px; color: #8aa081; margin-top: 10px; }
   .media-card .sound-btn {
     margin-top: 14px;
-    padding: 10px 24px;
+    padding: 10px 26px;
     font-size: 14px;
+    background-color: var(--m-mauve);
   }
+  .media-card .sound-btn:hover:not(:disabled) { background-color: var(--m-mauve-d); }
   .media-card audio { width: 100%; max-width: 320px; margin-top: 6px; }
 
   /* 影片輪播（沿用好物推薦廣告輪播的視覺語言） */
@@ -260,6 +285,7 @@
     margin-top: 10px;
   }
   .video-dots .dot {
+    box-shadow: none;
     width: 10px;
     height: 10px;
     padding: 0;
@@ -267,8 +293,8 @@
     border: none;
     background-color: #d7e6cd;
   }
-  .video-dots .dot.active { background-color: #2e8b3d; }
-  .video-dots .dot:hover { transform: none; background-color: #2e8b3d; }
+  .video-dots .dot.active { background-color: var(--m-sage); }
+  .video-dots .dot:hover:not(:disabled) { transform: none; box-shadow: none; background-color: var(--m-sage); }
 
   /* ===== 開場提示：建議戴耳機 / 打開音量 ===== */
   .intro-overlay {
@@ -294,7 +320,7 @@
   .intro-box .intro-icon { font-size: 48px; margin-bottom: 8px; }
   .intro-box h2 { font-size: 20px; margin: 0 0 10px; }
   .intro-box p { font-size: 14px; color: #5a6b5a; margin: 0 0 22px; }
-  .intro-box button { width: 100%; }
+  .intro-box button { width: 100%; padding: 14px 20px; }
   .table-wrap {
     margin-top: 24px;
     border: 1px solid #d7e6cd;
@@ -346,7 +372,13 @@
     color: #2e3d2f;
   }
   .food-search-row input:focus { outline: 2px solid #3c6b3f; }
-  .food-search-row button { flex-shrink: 0; padding: 10px 26px; }
+  .food-search-row .btn-search {
+    flex-shrink: 0;
+    padding: 10px 28px;
+    border-radius: 12px;
+    background-color: var(--m-blue);
+  }
+  .food-search-row .btn-search:hover:not(:disabled) { background-color: var(--m-blue-d); }
   .food-result { margin: 0 18px 18px; min-height: 0; }
   .food-result:empty { margin: 0; }
   .food-hint {
@@ -460,6 +492,7 @@
   }
   .ad-dots { display: flex; gap: 8px; }
   .ad-dots .dot {
+    box-shadow: none;
     width: 10px;
     height: 10px;
     padding: 0;
@@ -467,8 +500,8 @@
     border: none;
     background-color: #e3cf9c;
   }
-  .ad-dots .dot.active { background-color: #c0733b; }
-  .ad-dots .dot:hover { transform: none; background-color: #c0733b; }
+  .ad-dots .dot.active { background-color: var(--m-rose); }
+  .ad-dots .dot:hover:not(:disabled) { transform: none; box-shadow: none; background-color: var(--m-rose); }
   .ad-link { color: #c0733b; font-weight: bold; font-size: 14px; }
   @media (prefers-reduced-motion: reduce) { .ad-slide { transition: none; } }
 
@@ -494,32 +527,41 @@
   }
   .q-options { display: flex; flex-direction: column; gap: 10px; }
   .q-options button {
-    background-color: #f4f8f1;
-    border: 1px solid #e0ebd9;
-    border-radius: 10px;
-    padding: 12px 16px;
+    background-color: var(--m-sand);
+    border: 2px solid transparent;
+    border-radius: 14px;
+    padding: 12px 18px;
     font-size: 16px;
-    color: #3c6b3f;
+    color: var(--m-sand-ink);
     text-align: left;
     width: 100%;
     box-sizing: border-box;
+    box-shadow: none;
+    letter-spacing: 0.02em;
   }
-  .q-options button:hover:not(:disabled) { border-color: #3c6b3f; background-color: #eef5e8; }
+  .q-options button:hover:not(:disabled) { background-color: var(--m-sand-d); border-color: var(--m-mauve); color: var(--m-sand-ink); box-shadow: var(--m-shadow); }
   .q-options button:disabled { cursor: default; opacity: 0.6; }
-  .q-options button.picked.right { background-color: #dff1d8; border-color: #2e8b3d; color: #2e8b3d; opacity: 1; }
-  .q-options button.picked.miss { background-color: #fbe4e1; border-color: #c0392b; color: #c0392b; opacity: 1; }
+  .q-options button.picked.right { background-color: var(--m-sage-t); border-color: var(--m-sage); color: var(--m-sage-d); opacity: 1; }
+  .q-options button.picked.miss { background-color: var(--m-rose-t); border-color: var(--m-rose); color: var(--m-rose-d); opacity: 1; }
 
   .q-reveal {
     margin-top: 14px;
     font-size: 15px;
-    color: #c0733b;
-    background-color: #fdf3e6;
-    border: 1px dashed #e6b465;
+    color: var(--m-rose-d);
+    background-color: var(--m-rose-t);
+    border: 1px dashed var(--m-rose);
     border-radius: 10px;
     padding: 10px 14px;
     display: none;
   }
-  #nextBtn { margin-top: 18px; display: none; }
+  #nextBtn {
+    margin-top: 18px;
+    display: none;
+    background-color: var(--m-mauve);
+    border-radius: 18px 18px 18px 4px;
+    padding: 12px 30px;
+  }
+  #nextBtn:hover:not(:disabled) { background-color: var(--m-mauve-d); }
   #quizDone {
     display: none;
     text-align: center;
@@ -529,6 +571,66 @@
     font-weight: bold;
     color: #2e5230;
     margin-bottom: 8px;
+  }
+
+  /* ===== 按鈕點擊水波紋（顏色跟著按鈕文字色） ===== */
+  button { position: relative; overflow: hidden; }
+  .ripple {
+    position: absolute;
+    border-radius: 50%;
+    background-color: currentColor;
+    opacity: 0.3;
+    transform: scale(0);
+    pointer-events: none;
+    animation: ripple-out 0.6s ease-out forwards;
+  }
+  @keyframes ripple-out { to { transform: scale(1); opacity: 0; } }
+
+  /* ===== 答題回饋：全螢幕霧面背景 + 圓形徽章動畫 ===== */
+  .fb-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 16px;
+    pointer-events: none;
+    animation: fb-bg 1.4s ease forwards;
+  }
+  .fb-overlay.right { background-color: rgba(95, 122, 100, 0.42); }
+  .fb-overlay.miss  { background-color: rgba(155, 100, 95, 0.45); }
+  .fb-badge {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 84px;
+    font-weight: bold;
+    line-height: 1;
+    box-shadow: 0 12px 30px rgba(74, 63, 51, 0.3);
+  }
+  .fb-overlay.right .fb-badge { color: var(--m-sage);  animation: fb-pop 0.55s cubic-bezier(.2,1.4,.4,1) both; }
+  .fb-overlay.miss  .fb-badge { color: var(--m-rose);  animation: fb-pop 0.4s ease both, fb-shake 0.5s 0.35s ease both; }
+  .fb-text {
+    font-size: 24px;
+    font-weight: bold;
+    color: #fff;
+    letter-spacing: 0.1em;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    animation: fb-rise 0.5s 0.15s ease both;
+  }
+  @keyframes fb-bg   { 0% { opacity: 0; } 12% { opacity: 1; } 70% { opacity: 1; } 100% { opacity: 0; } }
+  @keyframes fb-pop  { 0% { transform: scale(0.2); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+  @keyframes fb-shake { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-14px); } 40% { transform: translateX(12px); } 60% { transform: translateX(-8px); } 80% { transform: translateX(5px); } }
+  @keyframes fb-rise { 0% { transform: translateY(14px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) {
+    .fb-badge, .fb-text, .ripple { animation: none; }
+    .fb-overlay { animation-duration: 1.2s; }
   }
 
   /* 答對：煙火 */
@@ -673,7 +775,7 @@
       <p>讓長者在家也能安心復健，讓家屬隨時掌握進度</p>
       <!-- 三個按鈕放在同一排 -->
       <div class="cta-row">
-        <button onclick="goTo('features')">了解功能</button>
+        <button class="btn-main" onclick="goTo('features')">了解功能</button>
         <button class="tab-btn active" id="tabFamily" onclick="showTab('family')">家屬端</button>
         <button class="tab-btn" id="tabFeature" onclick="showTab('feature')">功能介紹</button>
       </div>
@@ -911,7 +1013,7 @@
       <p class="media-note">輸入食物名稱，按「搜尋」查詢是否適合長者食用、該怎麼料理（涵蓋豆魚蛋肉、全穀雜糧、蔬菜、乳品、水果等近 30 種常見食物）</p>
       <div class="food-search-row">
         <input type="text" id="foodInput" placeholder="例如：地瓜、香蕉、生魚片…" onkeydown="if(event.key==='Enter'){checkFood();}">
-        <button type="button" onclick="checkFood()">搜尋</button>
+        <button type="button" class="btn-search" onclick="checkFood()">搜尋</button>
       </div>
       <div id="foodResult" class="food-result"></div>
     </div>
@@ -974,7 +1076,6 @@
     </div>
   </div>
 </section>
-```
   <!-- 小測驗：一題一題出現 -->
   <section id="quiz">
     <h2>小測驗｜猜猜看！</h2>
@@ -1111,9 +1212,10 @@
 
     if (isRight) {
       quizScore++;
+      showFeedback(true);
       launchFireworks();
     } else {
-      showBigX();
+      showFeedback(false);
     }
 
     if (q.reveal) {
@@ -1165,6 +1267,33 @@
       setTimeout(() => p.remove(), 1300);
     }
   }
+
+  /* ===== 答題回饋：全螢幕背景動畫 ===== */
+  function showFeedback(isRight) {
+    document.querySelectorAll('.fb-overlay').forEach(function (el) { el.remove(); });
+    const ov = document.createElement('div');
+    ov.className = 'fb-overlay ' + (isRight ? 'right' : 'miss');
+    ov.innerHTML = '<div class="fb-badge">' + (isRight ? '✓' : '✕') + '</div>' +
+                   '<div class="fb-text">' + (isRight ? '答對了！' : '再想想看～') + '</div>';
+    document.body.appendChild(ov);
+    setTimeout(function () { ov.remove(); }, 1450);
+  }
+
+  /* ===== 所有按鈕：點擊水波紋 ===== */
+  document.addEventListener('click', function (e) {
+    const btn = e.target.closest('button');
+    if (!btn || btn.disabled || btn.classList.contains('dot')) return;
+    const rect = btn.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height) * 2;
+    const r = document.createElement('span');
+    r.className = 'ripple';
+    r.style.width = r.style.height = size + 'px';
+    r.style.left = (e.clientX - rect.left - size / 2) + 'px';
+    r.style.top = (e.clientY - rect.top - size / 2) + 'px';
+    btn.appendChild(r);
+    setTimeout(function () { r.remove(); }, 650);
+  });
+
 
   /* 答錯：大叉叉 */
   function showBigX() {
