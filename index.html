@@ -459,6 +459,49 @@
     100% { opacity: 1; transform: translateY(0); }
   }
 
+  /* ===== 耳朵頻率測試（第 12 堂作業） ===== */
+  .hear-card {
+    max-width: 640px;
+    margin: 0 auto;
+    background-color: white;
+    border: 1px solid #d7e6cd;
+    border-radius: 18px;
+    padding: 26px 24px;
+    text-align: center;
+  }
+  .hear-steps { text-align: left; font-size: 14px; color: #5a6b5a; margin: 0 auto 14px; padding-left: 20px; max-width: 480px; line-height: 1.7; }
+  .hear-warn {
+    font-size: 13px;
+    color: var(--m-rose-d);
+    background-color: var(--m-rose-t);
+    border: 1px dashed var(--m-rose);
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin: 0 0 18px;
+    text-align: left;
+    line-height: 1.6;
+  }
+  .hear-freq { font-size: 46px; font-weight: bold; color: #2e5230; margin: 4px 0 0; min-height: 60px; }
+  .hear-status { font-size: 15px; color: #4d5f4e; min-height: 24px; margin-bottom: 12px; }
+  .hear-bar { height: 8px; border-radius: 6px; background-color: #e4efdd; overflow: hidden; max-width: 360px; margin: 0 auto 16px; }
+  .hear-bar span { display: block; height: 100%; width: 0; background-color: var(--m-sage); }
+  .hear-chips { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin: 0 0 18px; }
+  .hear-chip { font-size: 12px; padding: 4px 10px; border-radius: 14px; background-color: var(--m-sand); color: var(--m-sand-ink); }
+  .hear-chip.now   { background-color: var(--m-sage); color: #fff; }
+  .hear-chip.heard { background-color: var(--m-sage-t); color: var(--m-sage-d); }
+  .hear-chip.miss  { background-color: var(--m-rose-t); color: var(--m-rose-d); }
+  .hear-actions { display: flex; gap: 12px; justify-content: center; align-items: center; flex-wrap: wrap; }
+  .hear-actions .btn-miss { background-color: var(--m-rose); font-size: 18px; padding: 14px 38px; }
+  .hear-actions .btn-miss:hover:not(:disabled) { background-color: var(--m-rose-d); }
+  .hear-actions .btn-ref { background-color: var(--m-blue); padding: 10px 24px; font-size: 14px; }
+  .hear-actions .btn-ref:hover:not(:disabled) { background-color: var(--m-blue-d); }
+  .hear-actions .btn-reset { background-color: var(--m-mauve); padding: 10px 24px; font-size: 14px; }
+  .hear-actions .btn-reset:hover:not(:disabled) { background-color: var(--m-mauve-d); }
+  .hear-result { margin-top: 20px; text-align: left; }
+  .hear-result:empty { margin: 0; }
+  .hear-result .food-card .hear-age { font-size: 30px; font-weight: bold; color: #2e5230; margin-bottom: 6px; }
+  .hear-result .hear-data { font-size: 13px; color: #5a6b5a; margin-top: 10px; }
+
   /* ===== 長者端介紹 / 特色 / 未來發展 ===== */
   .box {
     background-color: white;
@@ -811,6 +854,7 @@
     <a href="#features" onclick="goTo('features');return false;">功能</a>
     <a href="#elderly" onclick="goTo('elderly');return false;">長者端介紹</a>
     <a href="#media" onclick="goTo('media');return false;">動作示範</a>
+    <a href="#hearing" onclick="goTo('hearing');return false;">耳朵年齡</a>
     <a href="#highlights" onclick="goTo('highlights');return false;">特色</a>
     <a href="#future" onclick="goTo('future');return false;">未來發展</a>
     <a href="#ads" onclick="goTo('ads');return false;">好物推薦</a>
@@ -1114,6 +1158,33 @@
         <button type="button" class="btn-search" onclick="checkFood()">搜尋</button>
       </div>
       <div id="foodResult" class="food-result"></div>
+    </div>
+  </section>
+
+  <!-- 耳朵頻率測試（第 12 堂作業：陣列 + Math 函式 + 多層 if...else） -->
+  <section id="hearing">
+    <h2>👂 耳朵頻率測試</h2>
+    <div class="hear-card">
+      <ol class="hear-steps">
+        <li>先按「試聽參考音」，把音量調到聽得清楚又舒服（建議戴耳機）。</li>
+        <li>按「開始測試」，會從低音到高音依序播放 10 個音，每個約 3.5 秒。</li>
+        <li>聽得到就繼續等；<b>聽不到時，請按下「我聽不到了」</b>，系統就會判斷你的耳朵年齡。</li>
+      </ol>
+      <p class="hear-warn">⚠️ 請先把音量調小再慢慢調大，高音若覺得刺耳或不舒服請立刻停止。一般手機喇叭很難播出 16 kHz 以上的聲音，建議用耳機。本測驗為網頁設計練習的趣味參考，不是醫療診斷。</p>
+
+      <div class="hear-freq" id="hearFreq">— kHz</div>
+      <div class="hear-status" id="hearStatus" aria-live="polite">準備好了就按「開始測試」</div>
+      <div class="hear-bar"><span id="hearBar"></span></div>
+      <div class="hear-chips" id="hearChips"></div>
+
+      <div class="hear-actions">
+        <button type="button" class="btn-ref" id="hearRefBtn" onclick="hearRef()">🔈 試聽參考音</button>
+        <button type="button" class="btn-main" id="hearStartBtn" onclick="hearStart()">▶ 開始測試</button>
+        <button type="button" class="btn-miss" id="hearMissBtn" onclick="hearCantHear()" disabled>🙉 我聽不到了</button>
+        <button type="button" class="btn-reset" onclick="hearReset()">↺ 重測</button>
+      </div>
+
+      <div class="hear-result" id="hearResult"></div>
     </div>
   </section>
 
@@ -1538,6 +1609,207 @@
         '<p class="food-hint">目前資料庫還沒有「' + query + '」的資料，建議詢問醫師或營養師，依長者健康狀況判斷喔！</p>';
     }
   }
+
+  /* ===== 耳朵頻率測試（第 12 堂作業） =====
+     用到：陣列 (Array)、Math 函式 (Math.max / Math.round)、多層 if...else 判斷 */
+  const hearFreqs = [8000, 10000, 12000, 14000, 15000, 16000, 17000, 18000, 19000, 20000]; // 陣列：10 個測試頻率 (Hz)
+  const HEAR_TONE_MS = 3500;   // 每個音播放多久
+  const HEAR_GAP_MS  = 700;    // 兩個音中間的安靜時間
+  let hearCtx = null, hearOsc = null, hearGain = null;
+  let hearIdx = 0, hearRunning = false, hearTimer = null;
+  let hearHeard = [];          // 陣列：存放「聽得到」的頻率
+  let hearMissed = null;       // 聽不到的那個頻率
+
+  function hearGetCtx() {
+    if (!hearCtx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      hearCtx = new AC();
+    }
+    if (hearCtx.state === 'suspended') hearCtx.resume();
+    return hearCtx;
+  }
+
+  /* 播放一個純音（淡入淡出，避免爆音） */
+  function hearTone(freq, ms) {
+    const ctx = hearGetCtx();
+    if (!ctx) { document.getElementById('hearStatus').textContent = '這個瀏覽器不支援 Web Audio，請改用 Chrome / Edge / Safari。'; return; }
+    hearStopTone();
+    const t = ctx.currentTime, dur = ms / 1000;
+    hearOsc = ctx.createOscillator();
+    hearGain = ctx.createGain();
+    hearOsc.type = 'sine';
+    hearOsc.frequency.value = freq;
+    hearGain.gain.setValueAtTime(0, t);
+    hearGain.gain.linearRampToValueAtTime(0.25, t + 0.12);
+    hearGain.gain.setValueAtTime(0.25, t + dur - 0.12);
+    hearGain.gain.linearRampToValueAtTime(0, t + dur);
+    hearOsc.connect(hearGain);
+    hearGain.connect(ctx.destination);
+    hearOsc.start(t);
+    hearOsc.stop(t + dur + 0.05);
+  }
+  function hearStopTone() {
+    if (hearOsc) {
+      try { hearGain.gain.cancelScheduledValues(0); hearGain.gain.value = 0; hearOsc.stop(); } catch (e) {}
+      hearOsc = null; hearGain = null;
+    }
+  }
+
+  function hearKHz(hz) { return Math.round(hz / 100) / 10; }   // Hz → kHz（Math.round 四捨五入到小數點一位）
+
+  function hearRenderChips(nowIdx) {
+    const box = document.getElementById('hearChips');
+    box.innerHTML = '';
+    hearFreqs.forEach(function (f, i) {
+      const c = document.createElement('span');
+      let cls = 'hear-chip', mark = '';
+      if (hearHeard.indexOf(f) !== -1)      { cls += ' heard'; mark = ' ✓'; }
+      else if (hearMissed === f)            { cls += ' miss';  mark = ' ✕'; }
+      else if (i === nowIdx)                { cls += ' now'; }
+      c.className = cls;
+      c.textContent = hearKHz(f) + ' k' + mark;
+      box.appendChild(c);
+    });
+  }
+
+  function hearBarRun(ms) {
+    const bar = document.getElementById('hearBar');
+    bar.style.transition = 'none';
+    bar.style.width = '100%';
+    void bar.offsetWidth;                       // 強制重新計算，讓動畫從頭開始
+    bar.style.transition = 'width ' + ms + 'ms linear';
+    bar.style.width = '0%';
+  }
+  function hearBarReset() {
+    const bar = document.getElementById('hearBar');
+    bar.style.transition = 'none';
+    bar.style.width = '0%';
+  }
+
+  /* 試聽參考音：1 kHz，用來調整音量 */
+  function hearRef() {
+    if (hearRunning) return;
+    hearTone(1000, 1500);
+    document.getElementById('hearStatus').textContent = '這是 1 kHz 參考音，請把音量調到清楚但不刺耳';
+  }
+
+  function hearStart() {
+    hearReset(true);
+    hearRunning = true;
+    document.getElementById('hearStartBtn').disabled = true;
+    document.getElementById('hearRefBtn').disabled = true;
+    hearPlayNext();
+  }
+
+  function hearPlayNext() {
+    if (!hearRunning) return;
+    if (hearIdx >= hearFreqs.length) { hearFinish(); return; }   // 10 個音都聽到了
+    const f = hearFreqs[hearIdx];
+    document.getElementById('hearFreq').textContent = hearKHz(f) + ' kHz';
+    document.getElementById('hearStatus').textContent = '第 ' + (hearIdx + 1) + ' / ' + hearFreqs.length + ' 個音：聽到就等下一個，聽不到請按「我聽不到了」';
+    document.getElementById('hearMissBtn').disabled = false;
+    hearRenderChips(hearIdx);
+    hearTone(f, HEAR_TONE_MS);
+    hearBarRun(HEAR_TONE_MS);
+    // 時間到都沒按 → 代表聽得到
+    hearTimer = setTimeout(function () {
+      hearHeard.push(f);
+      hearIdx++;
+      document.getElementById('hearMissBtn').disabled = true;
+      hearRenderChips(-1);
+      hearBarReset();
+      hearTimer = setTimeout(hearPlayNext, HEAR_GAP_MS);
+    }, HEAR_TONE_MS);
+  }
+
+  /* 受試者按下「我聽不到了」 */
+  function hearCantHear() {
+    if (!hearRunning || document.getElementById('hearMissBtn').disabled) return;
+    clearTimeout(hearTimer);
+    hearStopTone();
+    hearMissed = hearFreqs[hearIdx];
+    hearFinish();
+  }
+
+  /* 判斷結果：Math.max 找最高聽到的頻率，再用多層 if...else 判斷耳朵年齡 */
+  function hearFinish() {
+    hearRunning = false;
+    clearTimeout(hearTimer);
+    hearStopTone();
+    hearBarReset();
+    document.getElementById('hearMissBtn').disabled = true;
+    document.getElementById('hearStartBtn').disabled = false;
+    document.getElementById('hearRefBtn').disabled = false;
+    hearRenderChips(-1);
+
+    const best = Math.max(0, ...hearHeard);                                   // 聽得到的最高頻率 (Hz)
+    const pct = Math.round(hearHeard.length / hearFreqs.length * 100);        // 通過比例 (%)
+    let age, title, level, tip;
+
+    if (best >= 20000) {
+      age = '18 歲以下'; title = '超年輕的耳朵 🧒'; level = 'ok';
+      tip = '20 kHz 都聽得到，高頻聽力非常好！';
+    } else if (best >= 19000) {
+      age = '20 歲以下'; title = '年輕的耳朵 🎧'; level = 'ok';
+      tip = '高頻聽力很棒，平常記得不要長時間用大音量聽耳機。';
+    } else if (best >= 18000) {
+      age = '24 歲以下'; title = '年輕的耳朵 🎧'; level = 'ok';
+      tip = '高頻聽力很棒，平常記得不要長時間用大音量聽耳機。';
+    } else if (best >= 17000) {
+      age = '30 歲以下'; title = '耳朵狀態良好 👍'; level = 'ok';
+      tip = '高頻聽力正常，維持良好的用耳習慣。';
+    } else if (best >= 16000) {
+      age = '40 歲以下'; title = '耳朵狀態良好 👍'; level = 'ok';
+      tip = '高頻聽力正常，維持良好的用耳習慣。';
+    } else if (best >= 14000) {
+      age = '50~60 歲'; title = '成熟的耳朵 🍃'; level = 'warn';
+      tip = '高頻會隨年齡慢慢下降，是正常現象；日常對話通常不受影響。';
+    } else if (best >= 10000) {
+      age = '60 歲以上'; title = '高頻有些下降 🌿'; level = 'warn';
+      tip = '和長輩說話時，放慢速度、咬字清楚、面對面會更好溝通。';
+    } else if (best >= 8000) {
+      age = '70 歲以上'; title = '高頻明顯下降 ⚠️'; level = 'bad';
+      tip = '建議到耳鼻喉科或聽力中心做專業聽力檢查。';
+    } else {
+      age = '無法判斷'; title = '連最低的音都沒聽到 ❓'; level = 'bad';
+      tip = '請確認音量、耳機是否接好；若音量正常仍聽不到，建議做專業聽力檢查。';
+    }
+
+    const missText = hearMissed === null ? '全部 10 個音都聽得到' : '聽不到的頻率：' + hearKHz(hearMissed) + ' kHz';
+    document.getElementById('hearFreq').textContent = best > 0 ? hearKHz(best) + ' kHz' : '— kHz';
+    document.getElementById('hearStatus').textContent = '測試結束';
+    document.getElementById('hearResult').innerHTML =
+      '<div class="food-card ' + level + '">' +
+        '<div class="food-name">' + title + '</div>' +
+        '<div class="hear-age">耳朵年齡：' + age + '</div>' +
+        '<div class="food-tip">' + tip + '</div>' +
+        '<div class="hear-data">最高聽到：' + (best > 0 ? hearKHz(best) + ' kHz' : '無') + '　｜　' + missText + '　｜　通過 ' + hearHeard.length + ' / ' + hearFreqs.length + '（' + pct + '%）</div>' +
+      '</div>';
+  }
+
+  function hearReset(keepButtons) {
+    clearTimeout(hearTimer);
+    hearStopTone();
+    hearRunning = false;
+    hearIdx = 0;
+    hearHeard = [];
+    hearMissed = null;
+    hearBarReset();
+    document.getElementById('hearFreq').textContent = '— kHz';
+    document.getElementById('hearStatus').textContent = '準備好了就按「開始測試」';
+    document.getElementById('hearResult').innerHTML = '';
+    document.getElementById('hearMissBtn').disabled = true;
+    if (!keepButtons) {
+      document.getElementById('hearStartBtn').disabled = false;
+      document.getElementById('hearRefBtn').disabled = false;
+    }
+    hearRenderChips(-1);
+  }
+  hearRenderChips(-1);
+
+  /* 切到別的分頁就停止測試，避免偷偷繼續播放 */
+  document.addEventListener('visibilitychange', function () { if (document.hidden && hearRunning) hearReset(); });
 </script>
 </body>
 </html>
